@@ -1,4 +1,4 @@
-package com.toolv.myrabbitmq.message.returnmsg.consumer;
+package com.toolv.myrabbitmq.ack.consumer;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -23,18 +23,21 @@ public class ConsumerDemo
 
 		Channel channel = connection.createChannel();
 
+		channel.basicQos(0, 1, false);
+
 		// 声明交换机
-		String exchangeName = "return_exchange_name";
-		channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC, true, false, false, null);
+		String exchangeName = "qos_exchange_name";
+		channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, true, false, false, null);
 
 		// 声明队列
 		String queueName = "test001";
 		channel.queueDeclare(queueName, true, false, false, null);
 
 		// 将队列、交换机、路由键绑定到一起
-		String routingKey = "return_test_#";
+		String routingKey = "qos_test_rk";
 		channel.queueBind(queueName, exchangeName, routingKey);
 
-		channel.basicConsume(queueName, true, new ReturnConsumer(channel));
+		// autoAck一定要关闭
+		channel.basicConsume(queueName, false, new QosConsumer(channel));
 	}
 }

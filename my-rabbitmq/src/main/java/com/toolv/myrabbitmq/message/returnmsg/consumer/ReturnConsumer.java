@@ -4,44 +4,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
 
-public class ReturnConsumer implements Consumer
+public class ReturnConsumer extends DefaultConsumer
 {
-	@Override
-	public void handleConsumeOk(String consumerTag)
+	public ReturnConsumer(Channel channel)
 	{
-
+		super(channel);
 	}
 
 	@Override
-	public void handleCancelOk(String consumerTag)
-	{
-
-	}
-
-	@Override
-	public void handleCancel(String consumerTag) throws IOException
-	{
-
-	}
-
-	@Override
-	public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig)
-	{
-
-	}
-
-	@Override
-	public void handleRecoverOk(String consumerTag)
-	{
-
-	}
-
-	@Override
-	public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException
+	public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
 	{
 		String s = new String(body, StandardCharsets.UTF_8);
 		System.out.println(s);
