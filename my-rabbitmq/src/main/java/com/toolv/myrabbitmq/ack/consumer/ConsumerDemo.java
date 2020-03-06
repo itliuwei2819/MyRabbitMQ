@@ -23,21 +23,22 @@ public class ConsumerDemo
 
 		Channel channel = connection.createChannel();
 
+		// 设置每次只接收一个消息
 		channel.basicQos(0, 1, false);
 
 		// 声明交换机
-		String exchangeName = "qos_exchange_name";
-		channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT, true, false, false, null);
+		String exchangeName = "ack_exchange_name";
+		channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC, true, false, false, null);
 
 		// 声明队列
 		String queueName = "test001";
 		channel.queueDeclare(queueName, true, false, false, null);
 
 		// 将队列、交换机、路由键绑定到一起
-		String routingKey = "qos_test_rk";
+		String routingKey = "ack_test_rk.*";
 		channel.queueBind(queueName, exchangeName, routingKey);
 
 		// autoAck一定要关闭
-		channel.basicConsume(queueName, false, new QosConsumer(channel));
+		channel.basicConsume(queueName, false, new AckConsumer(channel));
 	}
 }
